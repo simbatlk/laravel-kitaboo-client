@@ -1,0 +1,38 @@
+{
+    "name": "thunderlane/laravel-kitaboo-client",
+    "type": "library",
+    "description": "Kitaboo library for Laravel",
+    "keywords": ["Kitaboo", "Hurix"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Atanasov",
+            "email": "thunderlane@thewonderbolts.eu",
+            "homepage": "https://github.com/simbatlk"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "illuminate/support": "^5.5",
+        "guzzlehttp/psr7": "^1.5",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "provide": {
+        "psr/http-message-implementation": "1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Thunderlane\\Kitaboo\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Thunderlane\\Kitaboo\\KitabooServiceProvider"
+            ]
+        }
+    }
+}
