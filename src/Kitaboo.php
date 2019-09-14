@@ -11,12 +11,30 @@
 
 namespace Thunderlane\Kitaboo;
 
+use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
+
 /**
  * Class Kitaboo
  *
  * @package Thunderlane\Kitaboo
  */
-class Kitaboo
+class Kitaboo implements KitabooInterface
 {
+    /**
+     * @var ExternalServicesInterface
+     */
+    private $externalServices;
 
+    public function __construct(ExternalServicesInterface $externalServices)
+    {
+        $this->externalServices = $externalServices;
+    }
+
+    /**
+     * @return ExternalServicesInterface
+     */
+    public function getExternalServices(): ExternalServicesInterface
+    {
+        return $this->externalServices;
+    }
 }

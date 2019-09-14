@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the Laravel Kitaboo package.
  *
@@ -9,9 +8,15 @@
  * file that was distributed with this source code.
  */
 
-return [
-    'context_url' => env('KITABOO_CONTEXT_URL') ?? null,
-    'client_id' => env('KITABOO_CLIENT_ID') ?? null,
-    'consumer_key' => env('KITABOO_CONSUMER_KEY') ?? null,
-    'consumer_secret' => env('KITABOO_CONSUMER_SECRET') ?? null,
-];
+namespace Thunderlane\Kitaboo\Clients;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+
+interface ExternalServicesInterface
+{
+    /**
+     * @return \GuzzleHttp\Client
+     */
+    public function getClient(): Client;
+}

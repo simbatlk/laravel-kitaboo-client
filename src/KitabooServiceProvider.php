@@ -12,6 +12,10 @@
 namespace Thunderlane\Kitaboo;
 
 use Illuminate\Support\ServiceProvider;
+use Thunderlane\Kitaboo\Services\ExternalServices;
+use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
+use Thunderlane\Kitaboo\Clients\ExternalServicesInterface as ExtertnalServiceClientInterface;
+use Thunderlane\Kitaboo\Clients\ExternalServices as ExtertnalServiceClient;
 
 /**
  * Class KitabooServiceProvider
@@ -30,6 +34,19 @@ class KitabooServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel_kitaboo.php', 'laravel_kitaboo');
+
+        $this->app->singleton(ExtertnalServiceClientInterface::class, function () {
+            return new ExtertnalServiceClient();
+        });
+
+        $this->app->singleton(ExternalServicesInterface::class, function () {
+            return new ExternalServices($this->app->make(ExtertnalServiceClientInterface::class));
+        });
+
+        $this->app->singleton(KitabooInterface::class, function () {
+            $externalServices = $this->app->make(ExternalServicesInterface::class);
+            return new Kitaboo($externalServices);
+        });
     }
 
     public function provides(): array
