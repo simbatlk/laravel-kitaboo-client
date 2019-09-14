@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Class ExternalServices
+ *
+ * @package Thunderlane\Kitaboo\Clients
+ */
 class ExternalServices implements ExternalServicesInterface
 {
     private const CONNECTION_TIMEOUT = 6;
@@ -46,23 +51,20 @@ class ExternalServices implements ExternalServicesInterface
     }
 
     /**
-     * @return \GuzzleHttp\Client
+     * @inheritdoc
      */
     public function getClient(): Client
     {
         return $this->client;
     }
 
-    private function setupClient()
+    private function setupClient(): void
     {
         $this->stack = HandlerStack::create();
 
-        $this->stack->push(Middleware::mapRequest(function (RequestInterface $request) {
-            return $request->withHeader('Accept', 'application/json');
-        }), 'accept');
-
-        $this->setupRetryStrategy();
-        $this->setupAuth();
+        $this->setupAcceptHeaderMiddleware();
+        $this->setupRetryStrategyMiddleware();
+        $this->setupAuthorizationMiddleware();
 
         $this->client = new Client([
             'base_uri'          => config('laravel_kitaboo')['context_url'],
@@ -73,7 +75,14 @@ class ExternalServices implements ExternalServicesInterface
         ]);
     }
 
-    private function setupRetryStrategy()
+    private function setupAcceptHeaderMiddleware(): void
+    {
+        $this->stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            return $request->withHeader('Accept', 'application/json');
+        }), 'accept');
+    }
+
+    private function setupRetryStrategyMiddleware(): void
     {
         $this->stack->push(Middleware::retry(
             function (
@@ -112,7 +121,7 @@ class ExternalServices implements ExternalServicesInterface
         ), 'retry');
     }
 
-    private function setupAuth()
+    private function setupAuthorizationMiddleware(): void
     {
         $oauth = new Oauth1([
             'consumer_key'    => config('laravel_kitaboo')['consumer_key'],

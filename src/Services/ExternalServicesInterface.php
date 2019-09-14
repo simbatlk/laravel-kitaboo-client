@@ -10,7 +10,17 @@
 
 namespace Thunderlane\Kitaboo\Services;
 
+use Illuminate\Support\Collection;
+
+/**
+ * Interface ExternalServicesInterface
+ *
+ * @package Thunderlane\Kitaboo\Services
+ */
 interface ExternalServicesInterface
 {
-
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function listCollection(): Collection;
 }

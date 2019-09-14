@@ -10,15 +10,48 @@
 
 namespace Thunderlane\Kitaboo\Models;
 
+/**
+ * Class CollectionModel
+ *
+ * @package Thunderlane\Kitaboo\Models
+ */
 class CollectionModel
 {
+    /**
+     * @var string
+     */
     private $clientCollectionId;
+
+    /**
+     * @var string
+     */
     private $title;
+
+    /**
+     * @var string
+     */
     private $coverImageUrl;
+
+    /**
+     * @var int
+     */
     private $id;
+
+    /**
+     * @var string
+     */
     private $collectionType;
+
+    /**
+     * @var string
+     */
     private $referenceNumber;
 
+    /**
+     * CollectionModel constructor.
+     *
+     * @param \stdClass|null $collection
+     */
     public function __construct(\stdClass $collection = null)
     {
         if ($collection) {
@@ -122,7 +155,10 @@ class CollectionModel
         $this->referenceNumber = $referenceNumber;
     }
 
-    public function hydrate(\stdClass $collection)
+    /**
+     * @param \stdClass $collection
+     */
+    public function hydrate(\stdClass $collection): void
     {
         $this->setClientCollectionId($collection->clientCollectionId);
         $this->setTitle($collection->title);

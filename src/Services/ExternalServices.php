@@ -23,6 +23,7 @@ use Thunderlane\Kitaboo\Models\CollectionModel;
 class ExternalServices implements ExternalServicesInterface
 {
     private const LIST_COLLECTION_ENDPOINT = 'DistributionServices/ext/api/ListCollection';
+
     /**
      * @var \Thunderlane\Kitaboo\Clients\ExternalServicesInterface
      */
@@ -39,7 +40,7 @@ class ExternalServices implements ExternalServicesInterface
     }
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @inheritdoc
      */
     public function listCollection(): Collection
     {
