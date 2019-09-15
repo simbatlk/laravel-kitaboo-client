@@ -34,9 +34,9 @@ class ExternalServices implements ExternalServicesInterface
      *
      * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $externalServicesClient
      */
-    public function __construct(ExternalInterface $externalServicesClient)
+    public function __construct(ExternalInterface $client)
     {
-        $this->client = $externalServicesClient->getClient();
+        $this->client = $client;
     }
 
     /**
@@ -44,7 +44,7 @@ class ExternalServices implements ExternalServicesInterface
      */
     public function listCollection(): Collection
     {
-        $response = $this->client->get(self::LIST_COLLECTION_ENDPOINT);
+        $response = $this->client->getClient()->get(self::LIST_COLLECTION_ENDPOINT);
         $result = json_decode($response->getBody()->getContents());
         if($result->responseCode !== 200) {
             throw new BadResponseException($result->responseMsg, $result->responseCode);

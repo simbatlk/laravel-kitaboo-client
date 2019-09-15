@@ -11,6 +11,7 @@
 namespace Thunderlane\Kitaboo\Clients\Traits;
 
 use GuzzleHttp\Middleware;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

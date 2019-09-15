@@ -10,11 +10,14 @@
 
 namespace Thunderlane\Kitaboo;
 
+use function foo\func;
 use Illuminate\Support\ServiceProvider;
 use Thunderlane\Kitaboo\Clients\External;
 use Thunderlane\Kitaboo\Clients\ExternalInterface;
 use Thunderlane\Kitaboo\Clients\Reader;
 use Thunderlane\Kitaboo\Clients\ReaderInterface;
+use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
+use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices;
 use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
 use Thunderlane\Kitaboo\Services\ReaderServices;
@@ -46,12 +49,18 @@ class KitabooServiceProvider extends ServiceProvider
             return new Reader();
         });
 
+        $this->app->singleton(ReaderServicesMarshallerFactoryInterface::class, function () {
+            return new ReaderServicesMarshallerFactory();
+        });
+
         $this->app->singleton(ExternalServicesInterface::class, function () {
             return new ExternalServices($this->app->make(ExternalInterface::class));
         });
 
         $this->app->singleton(ReaderServicesInterface::class, function () {
-            return new ReaderServices($this->app->make(ReaderInterface::class));
+            $client = $this->app->make(ReaderInterface::class);
+            $marshaller = $this->app->make(ReaderServicesMarshallerFactoryInterface::class);
+            return new ReaderServices($client, $marshaller);
         });
 
         $this->app->singleton(KitabooInterface::class, function () {
