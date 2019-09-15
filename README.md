@@ -1,4 +1,9 @@
-[![Build Status](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)
+[![Build Status](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master) 
+[![Total Downloads](https://poser.pugx.org/thunderlane/laravel-kitaboo-client/downloads)](https://packagist.org/packages/thunderlane/laravel-kitaboo-client)
+[![Latest Stable Version](https://poser.pugx.org/thunderlane/laravel-kitaboo-client/v/stable)](https://packagist.org/packages/thunderlane/laravel-kitaboo-client)
+[![Latest Unstable Version](https://poser.pugx.org/thunderlane/laravel-kitaboo-client/v/unstable)](https://packagist.org/packages/thunderlane/laravel-kitaboo-client)
+[![License](https://poser.pugx.org/thunderlane/laravel-kitaboo-client/license)](https://choosealicense.com/licenses/mit/)
+[![PhpStAn](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 **Installation**
 
