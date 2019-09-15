@@ -10,8 +10,6 @@
 
 namespace Thunderlane\Kitaboo;
 
-use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
-
 /**
  * Interface KitabooInterface
  *
@@ -19,5 +17,13 @@ use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
  */
 interface KitabooInterface
 {
-    public function getExternalServices(): ExternalServicesInterface;
+    /**
+     * @return \Thunderlane\Kitaboo\Services\ExternalServicesInterface
+     */
+    public function getExternalServices(): \Thunderlane\Kitaboo\Services\ExternalServicesInterface;
+
+    /**
+     * @return \Thunderlane\Kitaboo\Services\ReaderServicesInterface
+     */
+    public function getReaderServices(): \Thunderlane\Kitaboo\Services\ReaderServicesInterface;
 }

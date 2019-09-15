@@ -11,10 +11,14 @@
 namespace Thunderlane\Kitaboo;
 
 use Illuminate\Support\ServiceProvider;
+use Thunderlane\Kitaboo\Clients\External;
+use Thunderlane\Kitaboo\Clients\ExternalInterface;
+use Thunderlane\Kitaboo\Clients\Reader;
+use Thunderlane\Kitaboo\Clients\ReaderInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices;
 use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
-use Thunderlane\Kitaboo\Clients\ExternalServicesInterface as ExtertnalServiceClientInterface;
-use Thunderlane\Kitaboo\Clients\ExternalServices as ExtertnalServiceClient;
+use Thunderlane\Kitaboo\Services\ReaderServices;
+use Thunderlane\Kitaboo\Services\ReaderServicesInterface;
 
 /**
  * Class KitabooServiceProvider
@@ -34,17 +38,26 @@ class KitabooServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel_kitaboo.php', 'laravel_kitaboo');
 
-        $this->app->singleton(ExtertnalServiceClientInterface::class, function () {
-            return new ExtertnalServiceClient();
+        $this->app->singleton(ExternalInterface::class, function () {
+            return new External();
+        });
+
+        $this->app->singleton(ReaderInterface::class, function () {
+            return new Reader();
         });
 
         $this->app->singleton(ExternalServicesInterface::class, function () {
-            return new ExternalServices($this->app->make(ExtertnalServiceClientInterface::class));
+            return new ExternalServices($this->app->make(ExternalInterface::class));
+        });
+
+        $this->app->singleton(ReaderServicesInterface::class, function () {
+            return new ReaderServices($this->app->make(ReaderInterface::class));
         });
 
         $this->app->singleton(KitabooInterface::class, function () {
             $externalServices = $this->app->make(ExternalServicesInterface::class);
-            return new Kitaboo($externalServices);
+            $readerServices = $this->app->make(ReaderServicesInterface::class);
+            return new Kitaboo($externalServices, $readerServices);
         });
     }
 

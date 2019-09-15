@@ -11,6 +11,7 @@
 namespace Thunderlane\Kitaboo;
 
 use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
+use Thunderlane\Kitaboo\Services\ReaderServicesInterface;
 
 /**
  * Class Kitaboo
@@ -20,20 +21,38 @@ use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
 class Kitaboo implements KitabooInterface
 {
     /**
-     * @var ExternalServicesInterface
+     * @var \Thunderlane\Kitaboo\Services\ExternalServicesInterface
      */
     private $externalServices;
 
-    public function __construct(ExternalServicesInterface $externalServices)
+    /**
+     * @var \Thunderlane\Kitaboo\Services\ReaderServicesInterface
+     */
+    private $readerServices;
+    /**
+     * Kitaboo constructor.
+     *
+     * @param \Thunderlane\Kitaboo\Services\ExternalServicesInterface $externalServices
+     */
+    public function __construct(ExternalServicesInterface $externalServices, ReaderServicesInterface $readerServices)
     {
         $this->externalServices = $externalServices;
+        $this->readerServices= $readerServices;
     }
 
     /**
-     * @return ExternalServicesInterface
+     * @inheritdoc
      */
     public function getExternalServices(): ExternalServicesInterface
     {
         return $this->externalServices;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReaderServices(): ReaderServicesInterface
+    {
+        return $this->readerServices;
     }
 }

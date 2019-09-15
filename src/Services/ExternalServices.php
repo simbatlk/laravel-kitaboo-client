@@ -11,7 +11,7 @@
 namespace Thunderlane\Kitaboo\Services;
 
 use Illuminate\Support\Collection;
-use Thunderlane\Kitaboo\Clients\ExternalServicesInterface as ExternalServicesClientInterface;
+use Thunderlane\Kitaboo\Clients\ExternalInterface;
 use Thunderlane\Kitaboo\Exceptions\BadResponseException;
 use Thunderlane\Kitaboo\Models\CollectionModel;
 
@@ -25,16 +25,16 @@ class ExternalServices implements ExternalServicesInterface
     private const LIST_COLLECTION_ENDPOINT = 'DistributionServices/ext/api/ListCollection';
 
     /**
-     * @var \Thunderlane\Kitaboo\Clients\ExternalServicesInterface
+     * @var \GuzzleHttp\Client|\GuzzleHttp\ClientInterface
      */
     private $client;
 
     /**
      * ExternalServices constructor.
      *
-     * @param \Thunderlane\Kitaboo\Clients\ExternalServicesInterface $externalServicesClient
+     * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $externalServicesClient
      */
-    public function __construct(ExternalServicesClientInterface $externalServicesClient)
+    public function __construct(ExternalInterface $externalServicesClient)
     {
         $this->client = $externalServicesClient->getClient();
     }

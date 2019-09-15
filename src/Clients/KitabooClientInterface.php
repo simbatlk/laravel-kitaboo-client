@@ -10,13 +10,15 @@
 
 namespace Thunderlane\Kitaboo\Clients;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-
-interface ExternalServicesInterface
+/**
+ * Interface KitabooClientInterface
+ *
+ * @package Thunderlane\Kitaboo\Clients
+ */
+interface KitabooClientInterface
 {
     /**
      * @return \GuzzleHttp\Client
      */
-    public function getClient(): Client;
+    public function getClient(): \GuzzleHttp\ClientInterface;
 }
