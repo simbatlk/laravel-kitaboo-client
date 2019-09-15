@@ -10,7 +10,7 @@
 
 namespace Thunderlane\Kitaboo\Services\ExternalServices;
 
-use Illuminate\Support\Collection;
+use Jn\Collection;
 
 /**
  * Interface ExternalServicesInterface

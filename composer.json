@@ -14,7 +14,7 @@
     "require": {
         "php": ">=7.1",
         "illuminate/support": "^5.5",
-        "illuminate/config": "^5.5",
+        "juyn/collect": "^1.2",
         "guzzlehttp/psr7": "^1.5",
         "guzzlehttp/guzzle": "^6.3",
         "guzzlehttp/oauth-subscriber": "0.3.*"
