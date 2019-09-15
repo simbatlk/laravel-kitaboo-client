@@ -13,7 +13,9 @@ namespace Thunderlane\Kitaboo\Services\ExternalServices;
 use Illuminate\Support\Collection;
 use Thunderlane\Kitaboo\Clients\ExternalInterface;
 use Thunderlane\Kitaboo\Exceptions\BadResponseException;
-use Thunderlane\Kitaboo\Models\CollectionModel;
+use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactory;
+use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactoryInterface;
+use Thunderlane\Kitaboo\Marshallers\MarshallerInterface;
 
 /**
  * Class CollectionService
@@ -30,13 +32,19 @@ class CollectionService implements CollectionServiceInterface
     private $client;
 
     /**
+     * @var \Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactoryInterface
+     */
+    private $marshallerFactory;
+
+    /**
      * ExternalServices constructor.
      *
      * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $externalServicesClient
      */
-    public function __construct(ExternalInterface $client)
+    public function __construct(ExternalInterface $client, ExternalServicesMarshallerFactoryInterface $marshallerFactory)
     {
         $this->client = $client;
+        $this->marshallerFactory = $marshallerFactory;
     }
 
     /**
@@ -45,15 +53,12 @@ class CollectionService implements CollectionServiceInterface
     public function listCollection(): Collection
     {
         $response = $this->client->getClient()->get(self::LIST_COLLECTION_ENDPOINT);
-        $result = json_decode($response->getBody()->getContents());
-        if($result->responseCode !== 200) {
+        $marshaller = $this->marshallerFactory->getMarshaller(ExternalServicesMarshallerFactory::COLLECTION_LIST);
+        $result = $marshaller->decodeResponseData($response);
+
+        if ($result->responseCode !== 200) {
             throw new BadResponseException($result->responseMsg, $result->responseCode);
         }
-
-        array_walk($result->collectionList, function (&$collection) {
-            $collectionModel = new CollectionModel($collection);
-            $collection = $collectionModel;
-        });
 
         return new Collection($result->collectionList);
     }

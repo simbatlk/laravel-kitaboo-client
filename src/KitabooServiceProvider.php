@@ -15,6 +15,8 @@ use Thunderlane\Kitaboo\Clients\External;
 use Thunderlane\Kitaboo\Clients\ExternalInterface;
 use Thunderlane\Kitaboo\Clients\Reader;
 use Thunderlane\Kitaboo\Clients\ReaderInterface;
+use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactory;
+use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices;
@@ -66,8 +68,14 @@ class KitabooServiceProvider extends ServiceProvider
             return new External();
         });
 
+        $this->app->singleton(ExternalServicesMarshallerFactoryInterface::class, function () {
+            return new ExternalServicesMarshallerFactory();
+        });
+
         $this->app->singleton(CollectionServiceInterface::class, function () {
-            return new CollectionService($this->app->make(ExternalInterface::class));
+            $client = $this->app->make(ExternalInterface::class);
+            $marshaller = $this->app->make(ExternalServicesMarshallerFactoryInterface::class);
+            return new CollectionService($client, $marshaller);
         });
 
         $this->app->singleton(ExternalServicesInterface::class, function () {
