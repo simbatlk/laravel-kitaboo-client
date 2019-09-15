@@ -19,7 +19,7 @@ Run
 
 	use Thunderlane\Kitaboo\KitabooInterface;
 	
-	class YouController
+	class YourController
 	{
 		/**
 		* @var Thunderlane\Kitaboo\KitabooInterface
