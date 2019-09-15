@@ -10,6 +10,8 @@
 
 namespace Thunderlane\Kitaboo\Clients\Traits;
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
