@@ -15,7 +15,7 @@ namespace Thunderlane\Kitaboo\Models;
  *
  * @package Thunderlane\Kitaboo\Models
  */
-class CollectionModel
+class CollectionModel implements CollectionModelInterface
 {
     /**
      * @var string

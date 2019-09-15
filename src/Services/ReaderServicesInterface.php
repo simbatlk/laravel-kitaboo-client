@@ -20,35 +20,7 @@ use Thunderlane\Kitaboo\Models\UserModelInterface;
 interface ReaderServicesInterface
 {
     /**
-     * @param string $username
-     * @param string $password
-     * @return bool
-     * @throws \Thunderlane\Kitaboo\Exceptions\UnknownEntityException
+     * @return \Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface
      */
-    public function authenticateUser(string $username, string $password): bool;
-
-    /**
-     * @return null|\stdClass
-     */
-    public function getLastFailedResponse(): ?\stdClass;
-
-    /**
-     * @param \stdClass $lastFailedResponse
-     */
-    public function setLastFailedResponse(\stdClass $lastFailedResponse): void;
-
-    /**
-     * @return null|string
-     */
-    public function getCurrentUserToken(): ?string;
-
-    /**
-     * @param \Thunderlane\Kitaboo\Services\UserModelInterface $user
-     */
-    public function setCurrentUser(UserModelInterface $user): void;
-
-    /**
-     * @return null|\Thunderlane\Kitaboo\Models\UserModelInterface
-     */
-    public function getCurrentUser(): ?UserModelInterface;
+    public function getUserService(): \Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface;
 }

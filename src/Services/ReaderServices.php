@@ -10,11 +10,7 @@
 
 namespace Thunderlane\Kitaboo\Services;
 
-use Thunderlane\Kitaboo\Clients\ReaderInterface;
-use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
-use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
-use Thunderlane\Kitaboo\Models\UserModel;
-use Thunderlane\Kitaboo\Models\UserModelInterface;
+use Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface;
 
 /**
  * Class ReaderServices
@@ -23,96 +19,26 @@ use Thunderlane\Kitaboo\Models\UserModelInterface;
  */
 class ReaderServices implements ReaderServicesInterface
 {
-    private const AUTHENTICATE_USER_ENDPOINT = "DistributionServices/services/api/reader/user/SGH116SPZL/WINDOWS/authenticateUser";
-
     /**
-     * @var \Thunderlane\Kitaboo\Clients\ReaderInterface
+     * @var \Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface
      */
-    private $client;
-
-    /**
-     * @var \Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface
-     */
-    private $marshallerFactory;
-
-    /**
-     * @var \stdClass|null
-     */
-    private $lastFailedResponse;
-
-    /**
-     * @var \Thunderlane\Kitaboo\Models\UserModel|null
-     */
-    private $currentUser;
+    private $userService;
 
     /**
      * ReaderServices constructor.
      *
-     * @param \Thunderlane\Kitaboo\Clients\ReaderInterface $client
+     * @param \Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface $userService
      */
-    public function __construct(ReaderInterface $client, ReaderServicesMarshallerFactoryInterface $marshallerFactory)
+    public function __construct(UserServiceInterface $userService)
     {
-        $this->client = $client;
-        $this->marshallerFactory = $marshallerFactory;
+        $this->userService = $userService;
     }
 
     /**
      * @inheritdoc
      */
-    public function authenticateUser(string $username, string $password): bool
+    public function getUserService(): \Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface
     {
-        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::USER);
-        $data = $marshaller->encodePostData(['username' => $username, 'password' => $password]);
-        $response = $this->client->getClient()->post(self::AUTHENTICATE_USER_ENDPOINT, $data);
-        $response = $marshaller->decodeResponseData($response);
-
-        if ($response->responseCode !== 200) {
-            $this->setLastFailedResponse($response);
-            return false;
-        }
-
-        $this->client->setUserToken($response->userToken);
-        $this->setCurrentUser(new UserModel($response->user));
-        return true;
-    }
-
-    /**
-     * @return null|\stdClass
-     */
-    public function getLastFailedResponse(): ?\stdClass
-    {
-        return $this->lastFailedResponse;
-    }
-
-    /**
-     * @param \stdClass $lastFailedResponse
-     */
-    public function setLastFailedResponse(\stdClass $lastFailedResponse): void
-    {
-        $this->lastFailedResponse = $lastFailedResponse;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCurrentUserToken(): ?string
-    {
-        return $this->client->getUserToken();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setCurrentUser(UserModelInterface $user): void
-    {
-        $this->currentUser = $user;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCurrentUser(): ?UserModelInterface
-    {
-        return $this->currentUser;
+        return $this->userService;
     }
 }

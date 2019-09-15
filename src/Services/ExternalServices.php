@@ -10,10 +10,7 @@
 
 namespace Thunderlane\Kitaboo\Services;
 
-use Illuminate\Support\Collection;
-use Thunderlane\Kitaboo\Clients\ExternalInterface;
-use Thunderlane\Kitaboo\Exceptions\BadResponseException;
-use Thunderlane\Kitaboo\Models\CollectionModel;
+use Thunderlane\Kitaboo\Services\ExternalServices\CollectionServiceInterface;
 
 /**
  * Class ExternalServices
@@ -22,39 +19,26 @@ use Thunderlane\Kitaboo\Models\CollectionModel;
  */
 class ExternalServices implements ExternalServicesInterface
 {
-    private const LIST_COLLECTION_ENDPOINT = 'DistributionServices/ext/api/ListCollection';
-
     /**
-     * @var \GuzzleHttp\Client|\GuzzleHttp\ClientInterface
+     * @var \Thunderlane\Kitaboo\Services\ExternalServices\CollectionServiceInterface
      */
-    private $client;
+    private $collectionService;
 
     /**
      * ExternalServices constructor.
      *
-     * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $externalServicesClient
+     * @param \Thunderlane\Kitaboo\Services\ExternalServices\CollectionServiceInterface $collectionService
      */
-    public function __construct(ExternalInterface $client)
+    public function __construct(CollectionServiceInterface $collectionService)
     {
-        $this->client = $client;
+        $this->collectionService = $collectionService;
     }
 
     /**
      * @inheritdoc
      */
-    public function listCollection(): Collection
+    public function getCollectionService(): CollectionServiceInterface
     {
-        $response = $this->client->getClient()->get(self::LIST_COLLECTION_ENDPOINT);
-        $result = json_decode($response->getBody()->getContents());
-        if($result->responseCode !== 200) {
-            throw new BadResponseException($result->responseMsg, $result->responseCode);
-        }
-
-        array_walk($result->collectionList, function (&$collection) {
-            $collectionModel = new CollectionModel($collection);
-            $collection = $collectionModel;
-        });
-
-        return new Collection($result->collectionList);
+        return $this->collectionService;
     }
 }

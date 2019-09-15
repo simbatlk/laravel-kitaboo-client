@@ -1,13 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: soarin
- * Date: 15.9.2019 г.
- * Time: 13:37
+ * This file is part of the Laravel Kitaboo package.
+ *
+ * (c) Ivan Atanasov <thunderlane@thewonderbolts.eu>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Thunderlane\Kitaboo\Models;
 
+/**
+ * Class UserModel
+ *
+ * @package Thunderlane\Kitaboo\Models
+ */
 class UserModel implements UserModelInterface
 {
     /**

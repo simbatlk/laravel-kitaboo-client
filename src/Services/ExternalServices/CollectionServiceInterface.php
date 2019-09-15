@@ -8,20 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Thunderlane\Kitaboo\Services;
+namespace Thunderlane\Kitaboo\Services\ExternalServices;
 
 use Illuminate\Support\Collection;
-use Thunderlane\Kitaboo\Services\ExternalServices\CollectionServiceInterface;
 
 /**
  * Interface ExternalServicesInterface
  *
  * @package Thunderlane\Kitaboo\Services
  */
-interface ExternalServicesInterface
+interface CollectionServiceInterface
 {
     /**
-     * @return \Thunderlane\Kitaboo\Services\CollectionServiceInterface
+     * @return \Illuminate\Support\Collection
      */
-    public function getCollectionService(): CollectionServiceInterface;
+    public function listCollection(): Collection;
 }

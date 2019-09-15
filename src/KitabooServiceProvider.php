@@ -10,7 +10,6 @@
 
 namespace Thunderlane\Kitaboo;
 
-use function foo\func;
 use Illuminate\Support\ServiceProvider;
 use Thunderlane\Kitaboo\Clients\External;
 use Thunderlane\Kitaboo\Clients\ExternalInterface;
@@ -20,8 +19,12 @@ use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices;
 use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
+use Thunderlane\Kitaboo\Services\ExternalServices\CollectionService;
+use Thunderlane\Kitaboo\Services\ExternalServices\CollectionServiceInterface;
 use Thunderlane\Kitaboo\Services\ReaderServices;
 use Thunderlane\Kitaboo\Services\ReaderServicesInterface;
+use Thunderlane\Kitaboo\Services\ReaderServices\UserServiceInterface;
+use Thunderlane\Kitaboo\Services\ReaderServices\UserService;
 
 /**
  * Class KitabooServiceProvider
@@ -41,10 +44,40 @@ class KitabooServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel_kitaboo.php', 'laravel_kitaboo');
 
+        $this->registerExternalServices();
+        $this->registerReaderServices();
+
+        $this->app->singleton(KitabooInterface::class, function () {
+            $externalServices = $this->app->make(ExternalServicesInterface::class);
+            $readerServices = $this->app->make(ReaderServicesInterface::class);
+            return new Kitaboo($externalServices, $readerServices);
+        });
+
+    }
+
+    public function provides(): array
+    {
+        return ['laravel.kitaboo'];
+    }
+
+    private function registerExternalServices(): void
+    {
         $this->app->singleton(ExternalInterface::class, function () {
             return new External();
         });
 
+        $this->app->singleton(CollectionServiceInterface::class, function () {
+            return new CollectionService($this->app->make(ExternalInterface::class));
+        });
+
+        $this->app->singleton(ExternalServicesInterface::class, function () {
+            $collectionService = $this->app->make(CollectionServiceInterface::class);
+            return new ExternalServices($collectionService);
+        });
+    }
+
+    private function registerReaderServices(): void
+    {
         $this->app->singleton(ReaderInterface::class, function () {
             return new Reader();
         });
@@ -53,25 +86,15 @@ class KitabooServiceProvider extends ServiceProvider
             return new ReaderServicesMarshallerFactory();
         });
 
-        $this->app->singleton(ExternalServicesInterface::class, function () {
-            return new ExternalServices($this->app->make(ExternalInterface::class));
+        $this->app->singleton(UserServiceInterface::class, function () {
+            $client = $this->app->make(ReaderInterface::class);
+            $marshaller = $this->app->make(ReaderServicesMarshallerFactoryInterface::class);
+            return new UserService($client, $marshaller);
         });
 
         $this->app->singleton(ReaderServicesInterface::class, function () {
-            $client = $this->app->make(ReaderInterface::class);
-            $marshaller = $this->app->make(ReaderServicesMarshallerFactoryInterface::class);
-            return new ReaderServices($client, $marshaller);
+            $userService = $this->app->make(UserServiceInterface::class);
+            return new ReaderServices($userService);
         });
-
-        $this->app->singleton(KitabooInterface::class, function () {
-            $externalServices = $this->app->make(ExternalServicesInterface::class);
-            $readerServices = $this->app->make(ReaderServicesInterface::class);
-            return new Kitaboo($externalServices, $readerServices);
-        });
-    }
-
-    public function provides(): array
-    {
-        return ['laravel.kitaboo'];
     }
 }
