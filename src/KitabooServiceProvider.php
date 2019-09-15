@@ -57,6 +57,9 @@ class KitabooServiceProvider extends ServiceProvider
 
     }
 
+    /**
+     * @return array
+     */
     public function provides(): array
     {
         return ['laravel.kitaboo'];

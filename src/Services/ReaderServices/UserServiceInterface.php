@@ -43,6 +43,11 @@ interface UserServiceInterface
     public function getCurrentUserToken(): ?string;
 
     /**
+     * @param string $token
+     */
+    public function setCurrentUserToken(string $token): void;
+
+    /**
      * @param \Thunderlane\Kitaboo\Services\UserModelInterface $user
      */
     public function setCurrentUser(UserModelInterface $user): void;

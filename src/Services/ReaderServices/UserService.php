@@ -104,6 +104,14 @@ class UserService implements UserServiceInterface
     /**
      * @inheritdoc
      */
+    public function setCurrentUserToken(string $token): void
+    {
+        $this->client->setUserToken($token);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setCurrentUser(UserModelInterface $user): void
     {
         $this->currentUser = $user;
