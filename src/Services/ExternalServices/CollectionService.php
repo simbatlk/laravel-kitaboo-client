@@ -10,7 +10,7 @@
 
 namespace Thunderlane\Kitaboo\Services\ExternalServices;
 
-use Illuminate\Support\Collection;
+use Jn\Collection;
 use Thunderlane\Kitaboo\Clients\ExternalInterface;
 use Thunderlane\Kitaboo\Exceptions\BadResponseException;
 use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactory;
