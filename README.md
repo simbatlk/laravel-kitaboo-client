@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)
+
 **Installation**
 
 composer require thunderlane/laravel-kitaboo-client
