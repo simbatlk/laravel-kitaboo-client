@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)
+[![Build Status](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master)](https://travis-ci.org/simbatlk/laravel-kitaboo-client.svg?branch=master) [![PhpStAn](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 **Installation**
 
