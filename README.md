@@ -32,10 +32,9 @@ Run
 		}	
 	
 		/**
-		 * @param \Thunderlane\Kitaboo\KitabooInterface $kitaboo
 		 * @throws \Thunderlane\Kitaboo\Exceptions\UnknownEntityException
 		 */
-		public function yorAction()
+		public function yourAction()
 		{
 			$userService = $this->kitaboo->getReaderServices()->getUserService();
 			$userService->authenticateUser('USERNAME', 'PASSWORD');
