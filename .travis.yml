@@ -5,3 +5,5 @@ php:
   - 7.3
 script:
   - mkdir -p build/logs
+after_script:
+  - ./vendor/bin/phpstan analyse src
