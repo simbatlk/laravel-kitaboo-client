@@ -28,7 +28,7 @@ use Thunderlane\Kitaboo\Clients\Traits\ShouldRetry;
  *
  * @package Thunderlane\Kitaboo\Clients
  */
-class External implements ExternalInterface
+class External extends AbstractClient implements ExternalInterface
 {
     use ShouldRetry, AcceptsJson;
 

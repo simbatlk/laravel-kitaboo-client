@@ -12,45 +12,46 @@ namespace Thunderlane\Kitaboo\Marshallers\ReaderServices;
 
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
+use Thunderlane\Kitaboo\Marshallers\MarshallerAbstract;
 use Thunderlane\Kitaboo\Marshallers\MarshallerInterface;
 
 /**
- * Class UserMarshaller
+ * Class ChangePasswordMarshaller
  *
  * @package Thunderlane\Kitaboo\Marshallers\ReaderServices
  */
-class UserMarshaller implements MarshallerInterface
+class ChangePasswordMarshaller extends MarshallerAbstract implements MarshallerInterface
 {
     /**
      * @inheritdoc
      */
-    public function encodePostData(array $data): array
+    public function encodeData(array $data): array
     {
         if($this->isInputValid($data)) {
             return [
                 RequestOptions::JSON => [
                     'user' => [
-                        'userName' => $data['username'],
+                        'userName' => $data['userName'],
                         'password' => $data['password']
-                    ]
+                    ],
+                    'newPassword' => $data['newPassword']
                 ]
             ];
         }
     }
 
-    public function decodeResponseData(ResponseInterface $response): \stdClass
-    {
-        return json_decode($response->getBody()->getContents());
-    }
-
     private function isInputValid(array $data): bool
     {
-        if (!isset($data['username'])) {
+        if (!isset($data['userName'])) {
             throw new \InvalidArgumentException('Username is required');
         }
 
         if (!isset($data['password'])) {
             throw new \InvalidArgumentException('Password is required');
+        }
+
+        if (!isset($data['newPassword'])) {
+            throw new \InvalidArgumentException('New password is required');
         }
 
         return true;

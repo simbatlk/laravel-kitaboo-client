@@ -23,7 +23,7 @@ interface MarshallerInterface
      * @param array $data
      * @return array
      */
-    public function encodePostData(array $data): array;
+    public function encodeData(array $data): array;
 
     /**
      * @param \Psr\Http\Message\ResponseInterface $response

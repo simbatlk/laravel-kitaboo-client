@@ -21,4 +21,10 @@ interface KitabooClientInterface
      * @return \GuzzleHttp\Client
      */
     public function getClient(): \GuzzleHttp\ClientInterface;
+
+    /**
+     * @param \stdClass $response
+     * @return bool
+     */
+    public function isResponseOK(\stdClass $response): bool;
 }

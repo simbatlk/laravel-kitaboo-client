@@ -24,7 +24,7 @@ class CollectionListMarshaller implements MarshallerInterface
     /**
      * @inheritdoc
      */
-    public function encodePostData(array $data): array
+    public function encodeData(array $data): array
     {
         return $data;
     }

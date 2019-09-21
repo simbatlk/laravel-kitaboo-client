@@ -15,6 +15,7 @@ use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Models\UserModel;
 use Thunderlane\Kitaboo\Models\UserModelInterface;
+use Thunderlane\Kitaboo\Services\DevicesMap;
 
 /**
  * Class UserService
@@ -23,7 +24,11 @@ use Thunderlane\Kitaboo\Models\UserModelInterface;
  */
 class UserService implements UserServiceInterface
 {
-    private const AUTHENTICATE_USER_ENDPOINT = "DistributionServices/services/api/reader/user/SGH116SPZL/WINDOWS/authenticateUser";
+    private const AUTHENTICATE_USER_ENDPOINT = "DistributionServices/services/api/reader/user/%s/%s/authenticateUser";
+    private const CHANGE_PASSWORD_ENDPOINT = "DistributionServices/services/api/reader/user/%s/%s/changePassword";
+    private const CHECK_CLIENT_SESSION_ENDPOINT = "DistributionServices/services/api/reader/user/%s/%s/%s/checkClientSession";
+    private const VALIDATE_USER_TOKEN_ENDPOINT = "DistributionServices/services/api/reader/user/%s/%s/validateUserToken";
+    private const RESET_PASSWORD_ENDPOINT = "DistributionServices/services/api/reader/user/%s/%s/resetPassword";
 
     /**
      * @var \Thunderlane\Kitaboo\Clients\ReaderInterface
@@ -36,61 +41,166 @@ class UserService implements UserServiceInterface
     private $marshallerFactory;
 
     /**
-     * @var \stdClass|null
+     * @var string
      */
-    private $lastFailedResponse;
+    private $deviceId;
 
     /**
-     * @var \Thunderlane\Kitaboo\Models\UserModel|null
+     * @var string
+     */
+    private $deviceType;
+
+    /**
+     * @var \stdClass|null
+     */
+    private $lastResponse;
+
+    /**
+     * @var \Thunderlane\Kitaboo\Models\UserModel
      */
     private $currentUser;
 
     /**
      * UserService constructor.
      *
-     * @param \Thunderlane\Kitaboo\Services\ReaderServices\ReaderInterface $client
-     * @param \Thunderlane\Kitaboo\Services\ReaderServices\ReaderServicesMarshallerFactoryInterface $marshallerFactory
+     * @param \Thunderlane\Kitaboo\Clients\ReaderInterface $client
+     * @param \Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface $marshallerFactory
+     * @param \Thunderlane\Kitaboo\Models\UserModelInterface $userModel
+     * @param string $deviceId
+     * @param string|null $deviceType
      */
-    public function __construct(ReaderInterface $client, ReaderServicesMarshallerFactoryInterface $marshallerFactory)
-    {
+    public function __construct(
+        ReaderInterface $client,
+        ReaderServicesMarshallerFactoryInterface $marshallerFactory,
+        UserModelInterface $userModel,
+        string $deviceId = '0',
+        string $deviceType = null
+    ) {
         $this->client = $client;
         $this->marshallerFactory = $marshallerFactory;
+        $this->deviceId = $deviceId;
+        $this->deviceType = $deviceType ?? DevicesMap::DEVICE_WINDOWS;
+        $this->currentUser = $userModel;
     }
 
     /**
      * @inheritdoc
      */
-    public function authenticateUser(string $username, string $password): bool
+    public function authenticateUser(string $userName, string $password): bool
     {
-        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::USER);
-        $data = $marshaller->encodePostData(['username' => $username, 'password' => $password]);
-        $response = $this->client->getClient()->post(self::AUTHENTICATE_USER_ENDPOINT, $data);
-        $response = $marshaller->decodeResponseData($response);
+        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::AUTHENTICATE_USER);
+        $data = $marshaller->encodeData(['userName' => $userName, 'password' => $password]);
+        $response = $marshaller->decodeResponseData(
+            $this->client->getClient()->post(
+                $this->getEndpoint(self::AUTHENTICATE_USER_ENDPOINT),
+                $data
+            )
+        );
 
-        if ($response->responseCode !== 200) {
-            $this->setLastFailedResponse($response);
-            return false;
+        $this->setLastResponse($response);
+        $isResponseOK = $this->client->isResponseOK($response);
+        if ($isResponseOK) {
+            $this->client->setUserToken($response->userToken);
+            $this->setCurrentUser(new UserModel($response->user));
         }
 
-        $this->client->setUserToken($response->userToken);
-        $this->setCurrentUser(new UserModel($response->user));
-        return true;
+        return $isResponseOK;
     }
 
     /**
-     * @return null|\stdClass
+     * @inheritdoc
      */
-    public function getLastFailedResponse(): ?\stdClass
+    public function changePassword(string $oldPassword, string $newPassword): bool
     {
-        return $this->lastFailedResponse;
+        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::CHANGE_PASSWORD);
+
+        $data = $marshaller->encodeData([
+            'userName' => $this->currentUser->getUserName(),
+            'password' => $oldPassword,
+            'newPassword' => $newPassword,
+        ]);
+
+        $response = $marshaller->decodeResponseData(
+            $this->client->getClient()->post(
+                $this->getEndpoint(self::CHANGE_PASSWORD_ENDPOINT),
+                $data
+            )
+        );
+        $this->setLastResponse($response);
+
+        return $this->client->isResponseOK($response);
     }
 
     /**
-     * @param \stdClass $lastFailedResponse
+     * @inheritdoc
      */
-    public function setLastFailedResponse(\stdClass $lastFailedResponse): void
+    public function checkClientSession(int $bookId = 0): bool
     {
-        $this->lastFailedResponse = $lastFailedResponse;
+        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::CHECK_CLIENT_SESSION);
+
+        $response = $marshaller->decodeResponseData(
+            $this->client->getClient()->get(
+                $this->getEndpoint(self::CHECK_CLIENT_SESSION_ENDPOINT, $bookId)
+            )
+        );
+        $this->setLastResponse($response);
+
+        return $this->client->isResponseOK($response);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateUserToken(): bool
+    {
+        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::CHECK_CLIENT_SESSION);
+        $data = $marshaller->encodeData([
+            'usertoken' => $this->client->getUserToken(),
+        ]);
+
+        $response = $marshaller->decodeResponseData(
+            $this->client->getClient()->get(
+                $this->getEndpoint(self::VALIDATE_USER_TOKEN_ENDPOINT),
+                $data
+            )
+        );
+        $this->setLastResponse($response);
+        $isResponseOK = $this->client->isResponseOK($response);
+        if ($isResponseOK) {
+            $this->client->setUserToken($response->userToken);
+            $this->setCurrentUser(new UserModel($response->user));
+        }
+
+        return $isResponseOK;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resetPassword(string $userName): bool
+    {
+        $marshaller = $this->marshallerFactory->getMarshaller(ReaderServicesMarshallerFactory::RESET_PASSWORD);
+        $data = $marshaller->encodeData([
+            'userName' => $userName,
+        ]);
+
+        $response = $marshaller->decodeResponseData(
+            $this->client->getClient()->post(
+                $this->getEndpoint(self::RESET_PASSWORD_ENDPOINT),
+                $data
+            )
+        );
+        $this->setLastResponse($response);
+
+        return $this->client->isResponseOK($response);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLastResponse(): ?\stdClass
+    {
+        return $this->lastResponse;
     }
 
     /**
@@ -123,5 +233,22 @@ class UserService implements UserServiceInterface
     public function getCurrentUser(): ?UserModelInterface
     {
         return $this->currentUser;
+    }
+
+    /**
+     * @param \stdClass $lastResponse
+     */
+    private function setLastResponse(\stdClass $lastResponse): void
+    {
+        $this->lastResponse = $lastResponse;
+    }
+
+    /**
+     * @param string $endpointTemplate
+     * @return string
+     */
+    private function getEndpoint(string $endpointTemplate, $parameter = null)
+    {
+        return sprintf($endpointTemplate, $this->deviceId, $this->deviceType, $parameter);
     }
 }

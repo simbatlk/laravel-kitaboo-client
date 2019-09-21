@@ -20,22 +20,40 @@ use Thunderlane\Kitaboo\Models\UserModelInterface;
 interface UserServiceInterface
 {
     /**
-     * @param string $username
+     * @param string $userName
      * @param string $password
      * @return bool
      * @throws \Thunderlane\Kitaboo\Exceptions\UnknownEntityException
      */
-    public function authenticateUser(string $username, string $password): bool;
+    public function authenticateUser(string $userName, string $password): bool;
+
+    /**
+     * @param string $oldPassword
+     * @param string $newPassword
+     * @return bool
+     */
+    public function changePassword(string $oldPassword, string $newPassword): bool;
+
+    /**
+     * @return bool
+     */
+    public function checkClientSession(int $bookId): bool;
+
+    /**
+     * @return bool
+     */
+    public function validateUserToken(): bool;
+
+    /**
+     * @param string $userName
+     * @return bool
+     */
+    public function resetPassword(string $userName): bool;
 
     /**
      * @return null|\stdClass
      */
-    public function getLastFailedResponse(): ?\stdClass;
-
-    /**
-     * @param \stdClass $lastFailedResponse
-     */
-    public function setLastFailedResponse(\stdClass $lastFailedResponse): void;
+    public function getLastResponse(): ?\stdClass;
 
     /**
      * @return null|string

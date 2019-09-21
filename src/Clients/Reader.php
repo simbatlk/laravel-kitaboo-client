@@ -24,7 +24,7 @@ use Thunderlane\Kitaboo\Clients\Traits\ShouldRetry;
  *
  * @package Thunderlane\Kitaboo\Clients
  */
-class Reader implements ReaderInterface
+class Reader extends AbstractClient implements ReaderInterface
 {
     use ShouldRetry, AcceptsJson;
 

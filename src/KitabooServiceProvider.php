@@ -19,6 +19,8 @@ use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactory;
 use Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactoryInterface;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactory;
 use Thunderlane\Kitaboo\Marshallers\ReaderServicesMarshallerFactoryInterface;
+use Thunderlane\Kitaboo\Models\UserModel;
+use Thunderlane\Kitaboo\Models\UserModelInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices;
 use Thunderlane\Kitaboo\Services\ExternalServicesInterface;
 use Thunderlane\Kitaboo\Services\ExternalServices\CollectionService;
@@ -89,6 +91,10 @@ class KitabooServiceProvider extends ServiceProvider
 
     private function registerReaderServices(): void
     {
+        $this->app->bind(UserModelInterface::class, function () {
+            return new UserModel();
+        });
+
         $this->app->singleton(ReaderInterface::class, function () {
             return new Reader();
         });
@@ -100,7 +106,8 @@ class KitabooServiceProvider extends ServiceProvider
         $this->app->singleton(UserServiceInterface::class, function () {
             $client = $this->app->make(ReaderInterface::class);
             $marshaller = $this->app->make(ReaderServicesMarshallerFactoryInterface::class);
-            return new UserService($client, $marshaller);
+            $userModel = $this->app->make(UserModelInterface::class);
+            return new UserService($client, $marshaller, $userModel);
         });
 
         $this->app->singleton(ReaderServicesInterface::class, function () {

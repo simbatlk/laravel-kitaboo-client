@@ -27,7 +27,7 @@ class CollectionService implements CollectionServiceInterface
     private const LIST_COLLECTION_ENDPOINT = 'DistributionServices/ext/api/ListCollection';
 
     /**
-     * @var \GuzzleHttp\Client|\GuzzleHttp\ClientInterface
+     * @var \Thunderlane\Kitaboo\Clients\ExternalInterface
      */
     private $client;
 
@@ -37,9 +37,10 @@ class CollectionService implements CollectionServiceInterface
     private $marshallerFactory;
 
     /**
-     * ExternalServices constructor.
+     * CollectionService constructor.
      *
-     * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $externalServicesClient
+     * @param \Thunderlane\Kitaboo\Clients\ExternalInterface $client
+     * @param \Thunderlane\Kitaboo\Marshallers\ExternalServicesMarshallerFactoryInterface $marshallerFactory
      */
     public function __construct(ExternalInterface $client, ExternalServicesMarshallerFactoryInterface $marshallerFactory)
     {
